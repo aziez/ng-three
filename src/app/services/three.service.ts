@@ -11,7 +11,7 @@ export class ThreeService implements OnDestroy {
   private scene!: THREE.Scene;
   private light!: THREE.AmbientLight;
 
-  private cube!: THREE.Mesh;
+  private mesh!: THREE.Mesh;
   
   private frameId: number = 0;
 
@@ -48,10 +48,17 @@ export class ThreeService implements OnDestroy {
     this.light.position.z = 7;
     this.scene.add(this.light);
 
-    const geo = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshBasicMaterial({color: 0x00ff00});
-    this.cube = new THREE.Mesh(geo, material);
-    this.scene.add(this.cube)
+    const geo = new THREE.SphereGeometry(500, 60, 40);
+    geo.scale(-1, 1, 1);
+
+    const texture = new THREE.TextureLoader().load('../../assets/pano.jpg');
+    const material = new THREE.MeshBasicMaterial({map: texture});
+
+    this.mesh = new THREE.Mesh(geo, material)
+
+    this.scene.add(this.mesh);
+
+
   }
 
 
@@ -77,20 +84,19 @@ export class ThreeService implements OnDestroy {
         this.render();
       });
 
-      this.cube.rotation.x += 0.01;
-      this.cube.rotation.y += 0.01;
 
       this.renderer.render(this.scene, this.camera);
   }
 
   public resize(): void{
-        const width = window.innerWidth;
+    const width = window.innerWidth;
     const height = window.innerHeight;
 
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
 
     this.renderer.setSize(width, height);
+    this.renderer.setPixelRatio(window.devicePixelRatio);
   }
 
 }
